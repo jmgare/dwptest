@@ -1,0 +1,5 @@
+user:
+    locator:
+        default-city: London
+        default-distance: 50.0
+        user-api-base-url: https://test-url.com
