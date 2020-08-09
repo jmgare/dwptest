@@ -3,16 +3,15 @@ package com.dwp.userlocator;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,10 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserLocatorController.class)
 @AutoConfigureRestDocs(outputDir = "build/generated-snippets")
+@ActiveProfiles("test")
 public class UserLocatorControllerTest {
 
     @Autowired
@@ -51,10 +52,7 @@ public class UserLocatorControllerTest {
     
     @Test
     public void test_locator_users_defaults_singleUser() throws Exception {
-        Optional<String> cityOpt = Optional.empty();
-        Optional<Double> distanceOpt = Optional.empty();
-        
-        when(service.getUsers(cityOpt, distanceOpt)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
+        when(service.getUsers("London", 50.0)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
 
         this.mockMvc.perform(get("/locator/users")).andDo(print()).andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
@@ -81,13 +79,11 @@ public class UserLocatorControllerTest {
     }
     
     @Test
-    public void test_locator_users_cityAndDistanceSupplied() throws Exception {
-        String city = "London";
-        double distance = 12.8;
-        Optional<String> cityOpt = Optional.of(city);
-        Optional<Double> distanceOpt = Optional.of(distance);
+    public void test_locator_users_onlyCity() throws Exception {
+        String city = "Leeds";
+        double distance = 50.0;
 
-        when(service.getUsers(cityOpt, distanceOpt)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
+        when(service.getUsers(city, distance)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
         
         this.mockMvc.perform(get("/locator/users").param("city", city).param("distance", distance + "")).
             andDo(print()).
@@ -96,13 +92,37 @@ public class UserLocatorControllerTest {
     }
     
     @Test
+    public void test_locator_users_onlyDistance() throws Exception {
+        String city = "London";
+        double distance = 50.0;
+
+        when(service.getUsers(city, distance)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
+        
+        this.mockMvc.perform(get("/locator/users").param("city", city).param("distance", distance + "")).
+            andDo(print()).
+            andExpect(status().isOk()).
+            andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    public void test_locator_users_cityAndDistanceSupplied() throws Exception {
+        String city = "London";
+        double distance = 12.8;
+
+        when(service.getUsers(city, distance)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
+        
+        this.mockMvc.perform(get("/locator/users").param("city", city).param("distance", distance + "")).
+            andDo(print()).
+            andExpect(status().isOk()).
+            andExpect(jsonPath("$", hasSize(1)));
+    }    
+    
+    @Test
     public void test_locator_users_distanceLessThanZero_badRequest() throws Exception {
         String city = "London";
         double distance = -1.8;
-        Optional<String> cityOpt = Optional.of(city);
-        Optional<Double> distanceOpt = Optional.of(distance);
 
-        when(service.getUsers(cityOpt, distanceOpt)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
+        when(service.getUsers(city, distance)).thenReturn(Stream.of(user).collect(Collectors.toSet()));
         
         this.mockMvc.perform(get("/locator/users").param("city", city).param("distance", distance + "")).
             andExpect(status().isBadRequest()).
@@ -113,10 +133,8 @@ public class UserLocatorControllerTest {
     public void test_locator_users_serviceThrowsException_notFound() throws Exception {
         String city = "Leeds";
         double distance = 11.8;
-        Optional<String> cityOpt = Optional.of(city);
-        Optional<Double> distanceOpt = Optional.of(distance);
 
-        when(service.getUsers(cityOpt, distanceOpt)).thenThrow(new UserLocatorException());
+        when(service.getUsers(city, distance)).thenThrow(new UserLocatorException());
         
         this.mockMvc.perform(get("/locator/users").param("city", city).param("distance", distance + "")).
             andExpect(status().isNotFound()).

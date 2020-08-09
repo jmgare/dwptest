@@ -1,6 +1,5 @@
 package com.dwp.userlocator;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -29,12 +28,8 @@ public class UserLocatorService {
     private final CityLocationService cityLocationService;
 
     private final ProximityCalc proximityCalc;
-
-    private final UserLocatorProperties defaultProperties;
     
-    public Set<User> getUsers(Optional<String> cityOpt, Optional<Double> distanceOpt) {
-        final String city = cityOpt.orElse(defaultProperties.getDefaultCity());
-        final Double distance = distanceOpt.orElse(defaultProperties.getDefaultDistance());
+    public Set<User> getUsers(String city, double distance) {
         logger.info(String.format("Get users for %s/%s", city, distance));
         try {
             final Set<User> usersWithinCity = userAPIService.getUsers(city);            
@@ -51,7 +46,9 @@ public class UserLocatorService {
             
             return Stream.of(usersWithinCity, usersWithinProximity).flatMap(Set::stream).collect(Collectors.toSet());
         } catch (Exception e) {
-            throw new UserLocatorException(String.format("Unable to get users for %s/%s", city, distance), e);
+            String message = String.format("Unable to get users for %s/%s", city, distance);
+            logger.error(message ,e);
+            throw new UserLocatorException(message, e);
         }
     }
 }
