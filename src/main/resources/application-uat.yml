@@ -1,0 +1,3 @@
+user:
+    locator:
+        user-api-base-url: https://some-uat-server.com

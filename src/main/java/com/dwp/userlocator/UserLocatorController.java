@@ -28,6 +28,9 @@ public class UserLocatorController {
             Optional<Double> distance
             ) {
         try {
+            if (distance.isPresent() && distance.get().doubleValue() < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Distance must be greater than zero");
+            }
             Set<User> users = userLocatorService.getUsers(city, distance);
             return users.toArray(new User[0]);
         } catch (UserLocatorException e) {

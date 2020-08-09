@@ -1,0 +1,23 @@
+= User Locator API
+
+This API returns people who are listed as either living in the specified city, or whose current coordinates are within the specified distance of the city.
+
+The curl command is as follows:
+
+include::{snippets}/users/curl-request.adoc[]
+
+The request parameters are:
+
+include::{snippets}/users/request-parameters.adoc[]
+
+The response returns the JSON array of users meeting the criteria:
+
+include::{snippets}/users/response-fields.adoc[]
+
+A distance of less that zero will result in a BAD_REQUEST response:
+
+include::{snippets}/badRequest/http-response.adoc[]
+
+A unknown city will result in a NOT_FOUND response:
+
+include::{snippets}/notFound/http-response.adoc[]
