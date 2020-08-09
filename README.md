@@ -41,7 +41,7 @@ Tests are run using the following command:
 
 ## Assumptions
 
-The current implementation of the ProximityCalc interface calculates the distance between co-ordinates using doubles. The assumption is made that double provides enough precision for the purposes of the API. If better precision was needed then BigDecimal would be a better solution. The ProximityCalc interface could also be implemented using external packages or Google APIs.
+The current implementation of the ProximityCalc interface calculates the distance between co-ordinates using doubles. The assumption is made that double provides enough precision for the purposes of the API. If more precision was needed then BigDecimal would be a better solution. The ProximityCalc interface could also be implemented using external packages or Google APIs.
 
 The current implementation of the CityLocationService interface only supports the single city of London. Entering another city will result in a NOT_FOUND error response. 
 
