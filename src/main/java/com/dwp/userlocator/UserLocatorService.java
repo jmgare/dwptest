@@ -2,7 +2,7 @@ package com.dwp.userlocator;
 
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class UserLocatorService {
     public Set<User> getUsers(String city, double distance) {
         logger.info(String.format("Get users for %s/%s", city, distance));
         try {
-            final Set<User> usersWithinCity = userAPIService.getUsers(city);            
+            Set<User> usersWithinCity = userAPIService.getUsers(city);            
             Predicate<User> containedInCityUsers = usersWithinCity::contains;
 
             CityLocation cityLocation = cityLocationService.getCityLocation(city);
@@ -42,9 +42,9 @@ public class UserLocatorService {
             Set<User> usersWithinProximity = users.stream().
                 filter(containedInCityUsers.negate()).
                 filter(cityChecker::withinDistanceOfCity).
-                collect(Collectors.toSet());
+                collect(toSet());
             
-            return Stream.of(usersWithinCity, usersWithinProximity).flatMap(Set::stream).collect(Collectors.toSet());
+            return Stream.of(usersWithinCity, usersWithinProximity).flatMap(Set::stream).collect(toSet());
         } catch (Exception e) {
             String message = String.format("Unable to get users for %s/%s", city, distance);
             logger.error(message ,e);
