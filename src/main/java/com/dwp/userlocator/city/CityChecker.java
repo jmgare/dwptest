@@ -14,7 +14,8 @@ public class CityChecker {
     private final ProximityCalc proximityCalc;
 
     public boolean withinDistanceOfCity(User user) {
-        return proximityCalc.getMilesBetweenCoordinates(
-                user.getLatitude(), user.getLongitude(), cityLocation.getLatitude(), cityLocation.getLongitude()) < distance;
+        double milesBetweenCoordinates = proximityCalc.getMilesBetweenCoordinates(
+                user.getLatitude(), user.getLongitude(), cityLocation.getLatitude(), cityLocation.getLongitude());
+        return Double.compare(milesBetweenCoordinates, distance) <= 0;
     }
 }

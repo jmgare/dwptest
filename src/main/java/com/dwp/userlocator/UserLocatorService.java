@@ -30,12 +30,13 @@ public class UserLocatorService {
     private final ProximityCalc proximityCalc;
     
     public Set<User> getUsers(String city, double distance) {
-        logger.info(String.format("Get users for %s/%s", city, distance));
+        logger.info("Get users for {}/{}", city, distance);
         try {
+            CityLocation cityLocation = cityLocationService.getCityLocation(city);
+
             Set<User> usersWithinCity = userAPIService.getUsers(city);            
             Predicate<User> containedInCityUsers = usersWithinCity::contains;
 
-            CityLocation cityLocation = cityLocationService.getCityLocation(city);
             CityChecker cityChecker = new CityChecker(cityLocation, distance, proximityCalc);
 
             Set<User> users = userAPIService.getUsers();
