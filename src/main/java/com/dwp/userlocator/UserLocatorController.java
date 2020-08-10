@@ -30,6 +30,11 @@ public class UserLocatorController {
         return getServiceUsers(city, defaultProperties.getDefaultDistance());
     }
     
+    @RequestMapping(method = RequestMethod.GET, params = {"distance"})
+    public Set<User>  getUsers(@RequestParam double distance) {
+        return getServiceUsers(defaultProperties.getDefaultCity(), distance);
+    }
+    
     @RequestMapping(method = RequestMethod.GET, params = {"city", "distance"})
     public Set<User>  getUsers(@RequestParam String city, @RequestParam double distance) {
         return getServiceUsers(city, distance);
