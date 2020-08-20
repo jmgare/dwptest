@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import com.dwp.userlocator.city.CityLocationService;
 import com.dwp.userlocator.city.CityLocationServiceImpl;
 import com.dwp.userlocator.city.ProximityCalc;
-import com.dwp.userlocator.city.ProximityCalcImpl;
+import com.dwp.userlocator.city.ProximityCalcGeoToolsImpl;
 import com.dwp.userlocator.userapi.UserAPIService;
 import com.dwp.userlocator.userapi.UserAPIServiceImpl;
 
@@ -41,7 +41,7 @@ public class UserLocatorApplication {
         
         @Bean
         public ProximityCalc proximityCalc() {
-            return new ProximityCalcImpl();
+            return new ProximityCalcGeoToolsImpl();
         }
         
         @Bean

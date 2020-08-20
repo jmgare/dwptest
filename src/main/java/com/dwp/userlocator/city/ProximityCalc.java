@@ -1,6 +1,8 @@
 package com.dwp.userlocator.city;
 
+import java.math.BigDecimal;
+
 public interface ProximityCalc {
     
-    double getMilesBetweenCoordinates(double latitude1, double longitude1, double latitude2, double longitude2);
+    BigDecimal getMilesBetweenCoordinates(double latitude1, double longitude1, double latitude2, double longitude2);
 }

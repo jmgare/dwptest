@@ -3,6 +3,8 @@ package com.dwp.userlocator.city;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,7 +23,7 @@ public class CityCheckerTest {
     void testWithinDistanceOfCity_equalDistances() {
         when(proximityCalc.getMilesBetweenCoordinates(
                 user.getLatitude(), user.getLongitude(), 
-                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLatitude())).thenReturn(25.0);
+                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLongitude())).thenReturn(new BigDecimal(25.0));
         CityChecker cityChecker = new CityChecker(CityLocationService.LONDON, 25.0, proximityCalc);
         assertThat(cityChecker.withinDistanceOfCity(user)).isTrue();
     }
@@ -30,7 +32,7 @@ public class CityCheckerTest {
     void testWithinDistanceOfCity_withinDistance() {
         when(proximityCalc.getMilesBetweenCoordinates(
                 user.getLatitude(), user.getLongitude(), 
-                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLatitude())).thenReturn(20.0);
+                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLongitude())).thenReturn(new BigDecimal(20.0));
         CityChecker cityChecker = new CityChecker(CityLocationService.LONDON, 25.0, proximityCalc);
         assertThat(cityChecker.withinDistanceOfCity(user)).isTrue();
     }
@@ -39,8 +41,8 @@ public class CityCheckerTest {
     void testWithinDistanceOfCity_notWithinDistance() {
         when(proximityCalc.getMilesBetweenCoordinates(
                 user.getLatitude(), user.getLongitude(), 
-                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLatitude())).thenReturn(26.0);
+                CityLocationService.LONDON.getLatitude(), CityLocationService.LONDON.getLongitude())).thenReturn(new BigDecimal(26.0));
         CityChecker cityChecker = new CityChecker(CityLocationService.LONDON, 25.0, proximityCalc);
-        assertThat(cityChecker.withinDistanceOfCity(user)).isTrue();
+        assertThat(cityChecker.withinDistanceOfCity(user)).isFalse();
     }
 }
